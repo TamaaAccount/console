@@ -1,0 +1,1 @@
+Remove [ File / Folder ] : rm -r File_Name
