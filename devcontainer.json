@@ -1,0 +1,19 @@
+{
+  "name": "Multi-language Console",
+  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.9",  // Menggunakan image Python 3.9 sebagai dasar
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"  // Menentukan bash sebagai default shell
+  },
+  "extensions": [
+    "ms-python.python",  // Ekstensi untuk Python
+    "dbaeumer.vscode-eslint",  // Linting untuk JavaScript
+    "esbenp.prettier-vscode",  // Prettier untuk format kode
+    "ms-vscode.node-debug2"  // Debugger untuk Node.js
+  ],
+  "postCreateCommand": "pip install -r requirements.txt && npm install",  // Install dependencies setelah codespace siap
+  "remoteUser": "vscode",  // Menentukan user yang digunakan di dalam container
+  "forwardPorts": [3000],  // Misalnya untuk server yang dijalankan pada port 3000
+  "runArgs": [
+    "--init", "--no-cache", "--shm-size", "1g"  // Opsional untuk meningkatkan performa
+  ]
+}
