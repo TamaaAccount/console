@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Panel Hosting</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Web Panel Hosting</h1>
+    <div id="login-section">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+    </div><div id="panel-section" class="hidden">
+    <h2>Panel Admin</h2>
+    <button onclick="logout()">Logout</button>
+    <h3>Terminal</h3>
+    <input type="text" id="command" placeholder="Masukkan perintah" />
+    <button onclick="runCommand()">Jalankan</button>
+    <pre id="output"></pre>
+    
+    <h3>File Manager</h3>
+    <input type="text" id="filename" placeholder="Nama file" />
+    <textarea id="filecontent" placeholder="Isi file"></textarea>
+    <button onclick="uploadFile()">Upload</button>
+    <ul id="file-list"></ul>
+</div>
+
+<script>
+    async function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const res = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('panel-section').classList.remove('hidden');
+            loadFiles();
+        } else {
+            alert('Login gagal!');
+        }
+    }
+
+    async function logout() {
+        await fetch('/logout', { method: 'POST' });
+        location.reload();
+    }
+
+    async function runCommand() {
+        const command = document.getElementById('command').value;
+        const res = await fetch('/terminal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command })
+        });
+        const data = await res.json();
+        document.getElementById('output').innerText = data.output;
+    }
+
+    async function uploadFile() {
+        const filename = document.getElementById('filename').value;
+        const content = document.getElementById('filecontent').value;
+        await fetch('/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename, content })
+        });
+        loadFiles();
+    }
+
+    async function loadFiles() {
+        const res = await fetch('/files');
+        const data = await res.json();
+        const fileList = document.getElementById('file-list');
+        fileList.innerHTML = '';
+        data.files.forEach(file => {
+            const li = document.createElement('li');
+            li.textContent = file;
+            fileList.appendChild(li);
+        });
+    }
+</script>
+
+</body>
+</html>
